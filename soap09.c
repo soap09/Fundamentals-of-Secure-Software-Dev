@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
 // для выравнивания, считает цифры числа в выбранной СС
 // Савватеева А. Вариант 8
 int digitsCount(int n, int base) {
@@ -25,6 +28,9 @@ void numeralSystems(int n, int base) {
 }
 
 int pec() {
+    // Инициализация генератора случайных чисел
+    srand(time(NULL));
+    
     int base = 0;
     while (base < 2 || base > 16) {
         printf("========================================================\n");
