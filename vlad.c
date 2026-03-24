@@ -1,0 +1,146 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+// Определение структуры "Точка"
+typedef struct {
+    double x;
+    double y;
+} Point;
+
+// Определение структуры "Треугольник"
+typedef struct {
+    Point a;
+    Point b;
+    Point c;
+} Triangle;
+
+// Прототипы функций
+void inputData(Triangle* t, double* radius);
+int isTriangleValid(Triangle t);
+double distanceSquared(Point a, Point b);
+double dotProduct(Point a, Point b);
+int isPointInCircle(Point p, double radius);
+int isSegmentIntersectingCircle(Point p1, Point p2, double radius);
+int isIntersecting(Triangle t, double radius);
+void printResult(int result);
+
+int res() {
+    Triangle tri;
+    double radius;
+    
+    // Ввод данных
+    inputData(&tri, &radius);
+    
+    // Проверка корректности треугольника
+    if (!isTriangleValid(tri)) {
+        printf("Ошибка: Треугольник вырожден (все вершины на одной прямой или совпадают).\n");
+        return 1;
+    }
+    
+    // Проверка пересечения и вывод результата
+    int result = isIntersecting(tri, radius);
+    printResult(result);
+    
+    return 0;
+}
+
+// Функция ввода данных
+void inputData(Triangle* t, double* radius) {
+    printf("Введите координаты вершин треугольника:\n");
+    printf("Вершина A (x y): ");
+    scanf("%lf %lf", &t->a.x, &t->a.y);
+    printf("Вершина B (x y): ");
+    scanf("%lf %lf", &t->b.x, &t->b.y);
+    printf("Вершина C (x y): ");
+    scanf("%lf %lf", &t->c.x, &t->c.y);
+    
+    printf("Введите радиус круга: ");
+    scanf("%lf", radius);
+    
+    // Проверка корректности радиуса
+    while (*radius <= 0) {
+        printf("Ошибка: Радиус должен быть положительным числом.\n");
+        printf("Введите радиус круга снова: ");
+        scanf("%lf", radius);
+    }
+}
+
+// Проверка, является ли треугольник невырожденным
+int isTriangleValid(Triangle t) {
+    // Вычисляем площадь треугольника по формуле через координаты
+    double area = fabs((t.b.x - t.a.x) * (t.c.y - t.a.y) - 
+                       (t.c.x - t.a.x) * (t.b.y - t.a.y)) / 2.0;
+    return area > 1e-10; // Площадь не должна быть нулевой (с учетом погрешности)
+}
+
+// Квадрат расстояния между двумя точками
+double distanceSquared(Point a, Point b) {
+    double dx = a.x - b.x;
+    double dy = a.y - b.y;
+    return dx * dx + dy * dy;
+}
+
+// Скалярное произведение векторов
+double dotProduct(Point a, Point b) {
+    return a.x * b.x + a.y * b.y;
+}
+
+// Проверка, лежит ли точка внутри/на границе круга
+int isPointInCircle(Point p, double radius) {
+    return distanceSquared(p, (Point){0, 0}) <= radius * radius;
+} // <-- Добавлена закрывающая скобка
+
+// Проверка пересечения отрезка с кругом
+int isSegmentIntersectingCircle(Point p1, Point p2, double radius) {
+    // Вектор отрезка
+    Point segment = {p2.x - p1.x, p2.y - p1.y};
+    // Вектор от начала отрезка до центра круга
+    Point toCenter = {0 - p1.x, 0 - p1.y};
+    
+    // Параметр проекции центра на прямую отрезка
+    double t = dotProduct(toCenter, segment) / dotProduct(segment, segment);
+    
+    // Ограничиваем параметр отрезком [0, 1]
+    if (t < 0.0) t = 0.0;
+    if (t > 1.0) t = 1.0;
+    
+    // Находим ближайшую точку на отрезке к центру круга
+    Point closest = {
+        p1.x + t * segment.x,
+        p1.y + t * segment.y
+    };
+    
+    // Проверяем расстояние от этой точки до центра
+    return distanceSquared(closest, (Point){0, 0}) <= radius * radius;
+}
+
+// Главная функция проверки пересечения
+int isIntersecting(Triangle t, double radius) {
+    // 1. Проверяем, лежит ли любая вершина в круге
+    if (isPointInCircle(t.a, radius) ||
+        isPointInCircle(t.b, radius) ||
+        isPointInCircle(t.c, radius)) {
+        return 1;
+    }
+    
+    // 2. Проверяем, пересекает ли любая сторона круг
+    if (isSegmentIntersectingCircle(t.a, t.b, radius) ||
+        isSegmentIntersectingCircle(t.b, t.c, radius) ||
+        isSegmentIntersectingCircle(t.c, t.a, radius)) {
+        return 1;
+    }
+    
+    // 3. Все проверки не прошли - пересечения нет
+    return 0;
+}
+
+// Функция вывода результата
+void printResult(int result) {
+    if (result) {
+        printf("YES\n");  // Фигуры имеют общие точки
+    } else {
+        printf("NO\n");   // Фигуры не имеют общих точек
+    }
+}
