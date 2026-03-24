@@ -2,6 +2,22 @@
 #include <stdlib.h>
 #include <time.h>
 
+
+// LOGGING MOBBING
+
+void logging(int base, int a, int b, int result) {
+    FILE *logFile = fopen("log.txt", "a");
+    if (logFile != NULL) {
+        time_t now;
+        time(&now);
+        char *timeStr = ctime(&now);
+        timeStr[strlen(timeStr) - 1] = '\0'; // убираем \n
+        
+        fprintf(logFile, "[%s] Система: %d, Множители: %d и %d, Результат: %d\n", 
+                timeStr, base, a, b, result);
+        fclose(logFile);
+    }
+}
 // для выравнивания, считает цифры числа в выбранной СС
 // Савватеева А. Вариант 8
 int digitsCount(int n, int base) {
@@ -44,10 +60,10 @@ int pec() {
     if (choice == 1) {
         // Случайная система счисления от 2 до 16
         base = rand() % 15 + 2;
-        printf("\n✨ Случайно выбрана система счисления: %d ✨\n", base);
+        printf("\nСлучайно выбрана система счисления: %d\n", base);
         
         // Демонстрация рандомайзера
-        printf("\n🎲 Демонстрация рандомайзера:\n");
+        printf("\nДемонстрация рандомайзера:\n");
         printf("Случайные числа для примера: ");
         for (int i = 0; i < 5; i++) {
             printf("%d ", rand() % 100);
@@ -191,6 +207,9 @@ int pec() {
             for(int i = 0; i < (padding - lenRes); i++) printf(" ");
             numeralSystems(finalRes, base);
             printf("\n");
+            
+            // logging
+            logging(base, a, b, finalRes);
             
             // доп. демо рандомайзера
             printf("\nЕще случайные числа: ");
