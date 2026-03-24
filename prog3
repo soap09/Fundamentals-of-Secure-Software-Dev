@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+#include <stdlib.h>
+#include <time.h>
 
 // Возвращает числовое значение римской цифры
 int romanValue(char c)
@@ -121,12 +123,40 @@ int romanToArabic(const char *s)
     return total;
 }
 
+// Функция для генерации случайного римского числа от 1 до 3999
+void generateRandomRoman(char *buffer, int size)
+{
+    struct {
+        int value;
+        char symbol[3];
+    } romanMap[] = {
+        {1000, "M"}, {900, "CM"}, {500, "D"}, {400, "CD"},
+        {100, "C"}, {90, "XC"}, {50, "L"}, {40, "XL"},
+        {10, "X"}, {9, "IX"}, {5, "V"}, {4, "IV"}, {1, "I"}
+    };
+    
+    int num = rand() % 3999 + 1;
+    
+    buffer[0] = '\0';
+    for (int i = 0; i < 13; i++)
+    {
+        while (num >= romanMap[i].value)
+        {
+            strcat(buffer, romanMap[i].symbol);
+            num -= romanMap[i].value;
+        }
+    }
+}
+
 // Главная функция
 int ctr()
 {
     char roman[50];
-    printf("Введите римское число (от I до MMMCMXCIX): ");
-    scanf("%49s", roman);  // Защита от переполнения буфера
+    
+    srand(time(NULL));
+    generateRandomRoman(roman, sizeof(roman));
+    
+    printf("Сгенерировано римское число: %s\n", roman);
     
     int result = romanToArabic(roman);
     if (result != -1)
