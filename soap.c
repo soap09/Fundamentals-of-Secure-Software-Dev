@@ -32,18 +32,42 @@ int pec() {
     srand(time(NULL));
     
     int base = 0;
-    while (base < 2 || base > 16) {
-        printf("========================================================\n");
-        printf("Введите систему счисления (2 - 16): ");
-        if (scanf("%d", &base) != 1) {
-            printf("Ошибка ввода: пожалуйста, введите число.\n");
-            while(getchar() != '\n'); 
-            continue;
+    int choice;
+    
+    printf("========================================================\n");
+    printf("Выбрать случайную систему счисления?\n");
+    printf("1 - Да, выбрать случайную\n");
+    printf("2 - Нет, введу сам\n");
+    printf("Ваш выбор: ");
+    scanf("%d", &choice);
+    
+    if (choice == 1) {
+        // Случайная система счисления от 2 до 16
+        base = rand() % 15 + 2;
+        printf("\n✨ Случайно выбрана система счисления: %d ✨\n", base);
+        
+        // Демонстрация рандомайзера
+        printf("\n🎲 Демонстрация рандомайзера:\n");
+        printf("Случайные числа для примера: ");
+        for (int i = 0; i < 5; i++) {
+            printf("%d ", rand() % 100);
         }
-        if (base < 2 || base > 16) {
-            printf("Ошибка ввода: система должна быть в диапазоне от 2 до 16.\n");
+        printf("\n");
+    } else {
+        while (base < 2 || base > 16) {
+            printf("========================================================\n");
+            printf("Введите систему счисления (2 - 16): ");
+            if (scanf("%d", &base) != 1) {
+                printf("Ошибка ввода: пожалуйста, введите число.\n");
+                while(getchar() != '\n'); 
+                continue;
+            }
+            if (base < 2 || base > 16) {
+                printf("Ошибка ввода: система должна быть в диапазоне от 2 до 16.\n");
+            }
         }
-    }       
+    }
+    
     printf("========================================================\n\n");
 
     printf("\n\n\nТАБЛИЦА СЛОЖЕНИЯ В %d-ИЧНОЙ СИСТЕМЕ\n", base);
@@ -91,17 +115,28 @@ int pec() {
     printf("========================================================\n");
 
     // демо умножения
-    char choice;
+    char choice_mult;
     do {
         printf("\nПосмотреть демонстрацию умножения? (y/n): ");
-        scanf(" %c", &choice);
+        scanf(" %c", &choice_mult);
 
-        if (choice == 'y' || choice == 'Y') {
+        if (choice_mult == 'y' || choice_mult == 'Y') {
             int a, b;
-            printf("Введите 1-й множитель (в десятичной): ");
-            if (scanf("%d", &a) != 1) { while(getchar() != '\n'); continue; }
-            printf("Введите 2-й множитель (в десятичной): ");
-            if (scanf("%d", &b) != 1) { while(getchar() != '\n'); continue; }
+            int random_choice;
+            
+            printf("\nИспользовать случайные множители? (1 - да, 0 - нет): ");
+            scanf("%d", &random_choice);
+            
+            if (random_choice == 1) {
+                a = rand() % 100 + 1;
+                b = rand() % 100 + 1;
+                printf("Случайно выбраны множители: %d и %d\n", a, b);
+            } else {
+                printf("Введите 1-й множитель (в десятичной): ");
+                if (scanf("%d", &a) != 1) { while(getchar() != '\n'); continue; }
+                printf("Введите 2-й множитель (в десятичной): ");
+                if (scanf("%d", &b) != 1) { while(getchar() != '\n'); continue; }
+            }
 
             printf("\nУМНОЖЕНИЕ СТОЛБИКОМ В %d-ИЧНОЙ СИСТЕМЕ\n\n", base);
 
@@ -156,8 +191,15 @@ int pec() {
             for(int i = 0; i < (padding - lenRes); i++) printf(" ");
             numeralSystems(finalRes, base);
             printf("\n");
+            
+            // доп. демо рандомайзера
+            printf("\nЕще случайные числа: ");
+            for (int i = 0; i < 3; i++) {
+                printf("%d ", rand() % 50 + 1);
+            }
+            printf("\n");
         }
-    } while (choice == 'y' || choice == 'Y');
+    } while (choice_mult == 'y' || choice_mult == 'Y');
 
     printf("\nПрограмма завершена.\n");
     return 0;
